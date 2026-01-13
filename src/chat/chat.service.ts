@@ -1,32 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import OpenAI from 'openai';
-import * as dotenv from 'dotenv'
+import { ChatOpenAI } from '@langchain/openai';
+import { HumanMessage, SystemMessage, AIMessage} from 'langchain';
+import * as dotenv from 'dotenv';
 
-dotenv.config()
+dotenv.config();
 @Injectable()
 export class ChatService {
 
-    aiModel = new OpenAI({
-        baseURL: 'https://openrouter.ai/api/v1',
-        apiKey: process.env.openRouter,
-    });
-
-    async model(message: string){
-        const response = await this.aiModel.chat.completions.create({
-        
+    private aiModel: ChatOpenAI;
+    constructor() {
+      this.aiModel = new ChatOpenAI({
         model: 'qwen/qwen-2.5-7b-instruct',
-        messages: [
-            {
-                role: 'user',
-                content: message
-            }
-        ]
-        })
-        return response
+        apiKey: process.env.openRouter,
+        temperature: 1,
+        configuration: {
+          baseURL: 'https://openrouter.ai/api/v1'
+        }, 
+      });
+    }
+    async response(message: string): Promise<AIMessage> {
+      const user = new HumanMessage(message)
+      const system = new SystemMessage('You are a helpful assistant.') 
+      const prompt = [system, user]
+      const res = await this.aiModel.invoke(prompt)
+      return res;
     }
 
-    async response(message: string){
-        const res = await this.model(message)
-        return `USER : ${message}<br>BOT : ${res.choices[0].message.content}`;
+    async aimessage(message: string) {
+      const res = await this.response(message);
+      return `USER : ${message}<br>BOT : ${res.content}`;
     }
 }

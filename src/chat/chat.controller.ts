@@ -8,6 +8,6 @@ export class ChatController {
 
     @Get(':message')
     async chatroute(@Param('message') message: string){
-        return this.chatService.response(message);
+        return this.chatService.aimessage(message);
     }
 }
