@@ -40,12 +40,18 @@ export class ChatService {
   }
 
   async chatshowing(): Promise<any[]> {
-    return this.history.map((item) => ({
-      role: item.getType(),
-      content: item.content,
-    }));
+    const rolewise = this.history.map((item) => ({
+    role: item.getType(),
+    content: item.content,
+  }));
+  return this.prettychat(rolewise)
+}
+  async prettychat(rolewise){
+    const pretty = rolewise.map(item => [item.role,item.content])
+    return pretty
   }
 }
+
 //   }
 //   async response(message: string): Promise<AIMessage> {
 //     const user = new HumanMessage(message);
