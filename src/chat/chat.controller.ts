@@ -7,7 +7,7 @@ export class ChatController {
     constructor(private readonly chatService: ChatService){}
 
     @Get(':message')
-    async chatroute(@Param('message') message: string){
-        return this.chatService.aimessage(message);
+    async chatroute(@Param('message') message: string): Promise<any>{
+        return this.chatService.orchest(message);
     }
 }
